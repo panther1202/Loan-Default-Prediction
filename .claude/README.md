@@ -5,7 +5,7 @@ This folder is for Claude Code *mechanics* only: slash commands, and later (only
 That structure exists on a live, multi-contributor product because real, accumulated friction earned it. This project doesn't have that friction yet, and copying the shape wouldn't give you the substance — it would just give you folders to keep in sync.
 
 **This project's knowledge already lives elsewhere — don't duplicate it here:**
-- Decisions, architecture, scope, and process → `Loan System/` (the Obsidian vault: `PRD.md`, `docs/adr/*`, `TEST_STRATEGY.md`, `IMPLEMENTATION_PLAN.md`, `AI_SDLC_CHECKLIST.md`).
+- Decisions, architecture, scope, and process → `docs/` (the Obsidian vault: `PRD.md`, `docs/adr/*`, `TEST_STRATEGY.md`, `IMPLEMENTATION_PLAN.md`, `AI_SDLC_CHECKLIST.md`).
 - Agent bootstrap instructions → `CLAUDE.md` at the repo root (not inside this folder — that's Claude Code's standard auto-load location, and it stays there).
 
 If you're ever tempted to add a `context/` or `architecture/` folder here: don't. Update the vault instead. Two places claiming to be the source of truth for the same decision is exactly the kind of drift that already caused real bugs in this project (`CLAUDE.md` citing a stale ADR count more than once).
