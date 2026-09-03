@@ -68,7 +68,9 @@ originally proposed list (see Evidence 3). Still never `Age`, `MaritalStatus`, `
 
 ## Evidence for the parameter changes
 
-All figures below come from replaying the frozen model over the real dataset (40,000-row sample for
+**Read these as measurements of this model on this data, not as findings about lending:** [[0009-training-data-source]] establishes that `data/Loan_default.csv` is synthetic, with uniform marginals on every numeric column. That is what makes `CreditScore` nearly unpredictive and `EstimatedEMI`'s sign run backwards below. The numbers are correct and are the right basis for the current build; they are not consumer-credit insight.
+
+All figures below come from replaying the frozen model over the dataset (40,000-row sample for
 the card figures, 20,000 for the suggestion levers) at threshold 0.37. The replay is verified
 against `logistic_regression_loan_default_model.pkl` itself to a maximum absolute difference of
 `1.1e-16`, so these are the deployed model's own numbers rather than an approximation of them.

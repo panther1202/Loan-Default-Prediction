@@ -53,6 +53,7 @@ Out of scope (explicit, so scope doesn't creep):
 - Frontend: SvelteKit on Cloudflare, applicant-facing. See [[0006-frontend-framework-hosting]].
 - Tooling: current, in-demand, free — no paid SaaS.
 - Underlying ML model: confirmed `sklearn.LogisticRegression`, 26 features, exact parameters exported to `model_params.json`. See [[0005-ml-model-hosting]]. Frozen by default and changeable only through the gate in [[0008-model-change-policy]].
+- Training data: synthetic, not observed borrowers ([[0009-training-data-source]]). The classifier is a stand-in for the AI layer to explain, which is sufficient for every goal in §4 — but it means this project demonstrates an explainability pipeline, not a credit model, and should be presented that way.
 
 ## 6. Open decisions
 
