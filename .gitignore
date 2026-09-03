@@ -19,6 +19,11 @@ __pycache__/
 
 # obsidian per-machine ui state
 docs/.obsidian/workspace.json
+docs/.obsidian/types.json
+
+# obsidian community plugins - installed per machine, not project config
+docs/.obsidian/plugins/
+docs/.obsidian/community-plugins.json
 
 # 24MB kaggle source dataset - kept local, not versioned
 data/Loan_default.csv
