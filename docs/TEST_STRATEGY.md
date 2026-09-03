@@ -21,6 +21,8 @@ Unlike a pure-ML pyramid, "coverage" here includes non-deterministic LLM output 
 
 ### Stage 1 — Explainability layer
 - **Unit:** JSON schema validation on every LLM response (100% of calls must parse against the defined schema — no exceptions, no silent fallback to free text).
+- **Unit:** Rate-card and threshold logic — band lookup against `model_params.json.credit_score_bands.breakpoints` (409/519/629/740), the APR per band, and the `P(default) ≤ 0.37` boundary, including the exact-boundary case. Deterministic, no LLM involved.
+- **Unit:** Input validation — raw numeric fields clamp to `outlier_bounds`, and a categorical value absent from `all_categories` is rejected rather than silently scored as the dropped reference category (see [[0008-model-change-policy]]).
 - **Unit:** Attribution computation (`coefficient × standardized/dummy value`, per [[0005-ml-model-hosting]]) tested independently of the LLM — given fixed inputs, does it return the expected top-N features deterministically, and does the TypeScript reimplementation's probability output match the original Python model's `predict_proba` within floating-point tolerance for a set of known test rows.
 - **Integration:** Hallucination/grounding check — for a fixed set of test applicants, do the LLM's `primary_reasons` correspond (semantic match, not exact string) to the independently-computed top attributed features. Target: 100% pass on the fixed eval set before calling Stage 1 done.
 - **Safety:** Explicit, named check — confirmed from the actual model export (`model_params.json`) — that `Age`, `MaritalStatus_Married`, and `MaritalStatus_Single` never appear in `primary_reasons` or `explanation_text`, across the full eval set. This isn't a generic placeholder anymore: `Age` is the model's single largest-magnitude coefficient (−0.588 of 26 features), so this check has real work to do, not just theoretical coverage.
@@ -43,13 +45,15 @@ Unlike a pure-ML pyramid, "coverage" here includes non-deterministic LLM output 
 
 - Schema compliance: 100% (hard requirement, not a target to approach).
 - Grounding/hallucination check: 100% pass on the fixed eval set — **now a hard release gate, not a monitored metric**, since [[0006-frontend-framework-hosting]] means this content reaches the applicant with no human reviewing it first. A regression here should block deploy (CI gate), not just get logged for later review.
+- Suggestion allow-list check: 100% (hard requirement) — a denial suggestion may only reference `LoanAmount`, `HasCoSigner`, or `CreditScore` per [[0007-approval-decision-and-suggestions]]. `LoanTerm` is deliberately **not** on that list (extending it flips only 0.9% of denials on this model, and only shortening helps), so a suggestion mentioning term is a failure, not a near-miss.
 - Protected-class-factor check: 100% (hard requirement) — specifically `Age`, `MaritalStatus_Married`, `MaritalStatus_Single`, per [[0005-ml-model-hosting]].
 - Portal disclaimer presence: the "learning simulation, not legal/compliance-reviewed language" disclaimer must render on every explanation view — add this as a simple frontend smoke test once the portal exists, not just a design intention.
 - E2E latency/cost: pass/fail against the free-tier budget, measured, not assumed.
 
 ## Known gaps (explicit, not hidden)
 
-- The fixed eval set's size and composition can't be finalized until real applicant data/feature schema is available from the repo.
+- The fixed eval set's expected values are tied to one model export. Per [[0008-model-change-policy]], an approved retrain or dataset addition means regenerating them, not treating them as stable fixtures.
+- `Age` is a top-3 attribution in 76% of denials, so the protected-feature filter fires on most cases rather than occasionally. The eval set needs enough denial cases to exercise what remains citable after filtering (`MonthsEmployed`, `LoanAmount`, `Payment_to_Income_Ratio`), not just to confirm the filter fired.
 - Stage 4's E2E latency numbers are meaningless until [[0005-ml-model-hosting]] is resolved — don't write this test until the hosting architecture is chosen.
 - LLM non-determinism means "100% pass" assumes low/zero temperature (see [[0001-llm-provider]] action items) — if temperature is ever raised for other reasons, this test suite's pass-rate expectations need revisiting.
 

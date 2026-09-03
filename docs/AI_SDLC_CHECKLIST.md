@@ -35,6 +35,8 @@ Treat this note as the phase-gate tracker: each phase's items should be checked 
 - [ ] **Baseline Establishment** — Adapted. The "baseline" isn't a simple heuristic to beat with a new model — the existing frozen ML model *is* the baseline being explained. The equivalent baseline for the new AI layer: a naive, non-grounded LLM explanation (no attribution input, no RAG) as the control to demonstrate why grounding (Stage 1) and citation (Stage 2) actually matter. Worth building once, briefly, purely to show the before/after in the eval results.
 - [ ] **Compute Allocation** — Adapted. No training compute needed. Real question: does inference (model + attribution + LLM call + retrieval) fit Cloudflare's free-tier CPU budget? This is [[0005-ml-model-hosting]] again — the compute question in this project is a *hosting* question, not a *training hardware* question.
 
+> **Conditional on the model staying frozen.** The N/A markings in Phases 2 and 4 below rest on "no training happens in this project." Per [[0008-model-change-policy]] that is now a default rather than a permanent constraint: an approved retrain or an added dataset reactivates those items for the scope of that change, and they are then worked through rather than inherited as N/A.
+
 ## Phase 4: Iterative Development & Training
 
 - [ ] **Data Splitting** — N/A. No model is being trained in this project.
@@ -65,4 +67,4 @@ Phases 2 and 4 are mostly N/A/adapted — don't let that read as "skip ahead." P
 
 ## Related
 
-[[Home]] · [[PRD]] · [[TEST_STRATEGY]]
+[[Home]] · [[PRD]] · [[TEST_STRATEGY]] · [[0008-model-change-policy]]

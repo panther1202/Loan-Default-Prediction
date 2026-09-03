@@ -34,7 +34,7 @@ In scope:
 6. Applicant-facing self-service portal (SvelteKit, [[0006-frontend-framework-hosting]]) — Loan ID lookup, decision + explanation + citations display, visible disclaimer.
 
 Out of scope (explicit, so scope doesn't creep):
-- Retraining or improving the underlying ML model's accuracy.
+- Retraining or improving the underlying ML model's accuracy **as part of the AI layer's own work**. This is no longer excluded outright: per [[0008-model-change-policy]] the model may be changed, and additional training datasets added, through an explain-then-approve gate. What stays out of scope is changing it *incidentally* while building the AI layer.
 - Legally-certified compliance output — this is a learning simulation, restated in the UI itself, not just this document.
 - Real authentication — the portal uses Loan ID lookup against the demo dataset, not login/credentials. Deliberate simplification, not an oversight.
 - What-if/counterfactual scoring, fairness red-teaming evals, a drift-monitoring dashboard, and population-comparison context in explanations (see [[IMPLEMENTATION_PLAN]]'s Phase 2) — considered and explicitly deferred (not rejected) in favor of shipping the core 4-stage pipeline plus portal first.
@@ -52,11 +52,11 @@ Out of scope (explicit, so scope doesn't creep):
 - Deployment: Cloudflare (Workers + associated free services). See [[0004-deployment-platform]].
 - Frontend: SvelteKit on Cloudflare, applicant-facing. See [[0006-frontend-framework-hosting]].
 - Tooling: current, in-demand, free — no paid SaaS.
-- Underlying ML model: confirmed `sklearn.LogisticRegression`, 26 features, exact parameters exported to `model_params.json`. See [[0005-ml-model-hosting]].
+- Underlying ML model: confirmed `sklearn.LogisticRegression`, 26 features, exact parameters exported to `model_params.json`. See [[0005-ml-model-hosting]]. Frozen by default and changeable only through the gate in [[0008-model-change-policy]].
 
 ## 6. Open decisions
 
-None blocking implementation start. Visual/UX design of the portal is being handled separately (outside this vault, by the user directly) and is not tracked here as an open decision — only its architectural shape ([[0006-frontend-framework-hosting]]) is.
+None blocking implementation start. [[0007-approval-decision-and-suggestions]]'s parameters were the last open set and were confirmed on 2026-09-03 (threshold `P(default) ≤ 0.37`, quintile credit bands, a 400bps rate card, no term surcharge, `LoanTerm` dropped from the denial-suggestion allow-list) — each measured against the real dataset rather than assumed, see that ADR's Evidence section. Visual/UX design of the portal is being handled separately (outside this vault, by the user directly) and is not tracked here as an open decision — only its architectural shape ([[0006-frontend-framework-hosting]]) is.
 
 ## 7. Process
 
