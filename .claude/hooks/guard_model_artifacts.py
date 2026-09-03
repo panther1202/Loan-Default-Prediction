@@ -37,7 +37,10 @@ SANCTIONED = "export_model_params.py"
 # Tokens that indicate the command writes rather than reads. Kept deliberately broad;
 # a read-only command (cat, head, git diff, grep) matches none of them.
 WRITE_PATTERNS = (
-    r">",                     # redirect, covers > and >>
+    # Redirect. Excludes the arrows that show up constantly in prose and commit messages
+    # (`->`, `=>`, `-->`); `<...>` spans are stripped before scanning, which is what keeps a
+    # `Co-Authored-By: ... <noreply@example.com>` trailer from reading as a redirect.
+    r"(?<![-=<>])>",
     r"\btee\b",
     r"\brm\b",
     r"\bmv\b",
@@ -74,7 +77,11 @@ def mentions_protected(command):
 
 
 def looks_like_write(command):
-    return any(re.search(p, command) for p in WRITE_PATTERNS)
+    # Strip <...> spans first. A commit message carrying both a protected path and a
+    # `Co-Authored-By: ... <noreply@example.com>` trailer is the common case, and reading that
+    # trailer's closing angle bracket as a shell redirect blocks legitimate work every time.
+    scannable = re.sub(r"<[^<>\n]{0,200}>", " ", command)
+    return any(re.search(p, scannable) for p in WRITE_PATTERNS)
 
 
 def main():
