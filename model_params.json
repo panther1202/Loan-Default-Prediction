@@ -197,7 +197,7 @@
     "EstimatedEMI": "if InterestRate == 0: LoanAmount / LoanTerm; else: LoanAmount * r * (1+r)^n / ((1+r)^n - 1), where r = InterestRate/12/100, n = LoanTerm (months)",
     "Payment_to_Income_Ratio": "EstimatedEMI / (Income + 1e-6)"
   },
-  "prediction_formula": "p_default = sigmoid(intercept + sum(coefficients[f] * standardized_or_encoded_value[f] for f in feature_order)); standardize numeric features as (raw - scaler.mean[f]) / scaler.scale[f]; categorical dummy value is 1.0 if that category is present else 0.0, and the dropped_category for each column maps to all-zeros.",
+  "prediction_formula": "clamp each raw numeric feature to outlier_bounds.bounds[f]; then derive EstimatedEMI and Payment_to_Income_Ratio from the clamped values; then p_default = sigmoid(intercept + sum(coefficients[f] * standardized_or_encoded_value[f] for f in feature_order)); standardize numeric features as (clamped_or_derived - scaler.mean[f]) / scaler.scale[f]; categorical dummy value is 1.0 if that category is present else 0.0, and the dropped_category for each column maps to all-zeros.",
   "compliance_flags": {
     "protected_or_sensitive_input_features": [
       "Age",
@@ -205,5 +205,47 @@
       "MaritalStatus_Single"
     ],
     "note": "Age and marital status are protected bases under ECOA/Regulation B. The model uses them as predictive inputs (this is the original ML project's design, out of scope to change here), but the AI explanation layer (Stage 1) must never surface Age or MaritalStatus as a cited reason in generated explanations, regardless of their statistical contribution. Enforce this as an explicit eval check, not a prompt-only instruction."
-  }
+  },
+  "outlier_bounds": {
+    "note": "IQR bounds (Q1-1.5*IQR, Q3+1.5*IQR) computed on the full dataset after median/mode imputation. app.py caps every raw numeric input to these bounds BEFORE deriving EstimatedEMI/Payment_to_Income_Ratio and before the scaler was fit, so a serving pipeline must clamp raw inputs to these bounds first or it diverges from the trained model on extreme inputs. EstimatedEMI and Payment_to_Income_Ratio are derived after capping and are themselves NOT capped.",
+    "bounds": {
+      "Age": {
+        "lower": -6.5,
+        "upper": 93.5
+      },
+      "Income": {
+        "lower": -52264.75,
+        "upper": 217309.25
+      },
+      "LoanAmount": {
+        "lower": -118087.5,
+        "upper": 373228.5
+      },
+      "CreditScore": {
+        "lower": 24.5,
+        "upper": 1124.5
+      },
+      "MonthsEmployed": {
+        "lower": -60.0,
+        "upper": 180.0
+      },
+      "NumCreditLines": {
+        "lower": 0.5,
+        "upper": 4.5
+      },
+      "InterestRate": {
+        "lower": -9.45,
+        "upper": 36.47
+      },
+      "LoanTerm": {
+        "lower": -12.0,
+        "upper": 84.0
+      },
+      "DTIRatio": {
+        "lower": -0.3,
+        "upper": 1.2999999999999998
+      }
+    }
+  },
+  "imputation_values": {}
 }
