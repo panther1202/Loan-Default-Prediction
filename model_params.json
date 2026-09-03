@@ -1,0 +1,209 @@
+{
+  "model_type": "sklearn.linear_model.LogisticRegression",
+  "trained_with_sklearn_version": "1.7.0",
+  "hyperparameters": {
+    "solver": "liblinear",
+    "penalty": "l2",
+    "C": 1.0,
+    "class_weight": "balanced"
+  },
+  "intercept": -0.0862280479334083,
+  "feature_order": [
+    "Age",
+    "Income",
+    "LoanAmount",
+    "CreditScore",
+    "MonthsEmployed",
+    "NumCreditLines",
+    "InterestRate",
+    "LoanTerm",
+    "DTIRatio",
+    "EstimatedEMI",
+    "Payment_to_Income_Ratio",
+    "Education_High School",
+    "Education_Master's",
+    "Education_PhD",
+    "EmploymentType_Part-time",
+    "EmploymentType_Self-employed",
+    "EmploymentType_Unemployed",
+    "MaritalStatus_Married",
+    "MaritalStatus_Single",
+    "HasMortgage_Yes",
+    "HasDependents_Yes",
+    "LoanPurpose_Business",
+    "LoanPurpose_Education",
+    "LoanPurpose_Home",
+    "LoanPurpose_Other",
+    "HasCoSigner_Yes"
+  ],
+  "coefficients": {
+    "Age": -0.5879081520906014,
+    "Income": -0.10757893228031927,
+    "LoanAmount": 0.2720939731488201,
+    "CreditScore": -0.12599490798519272,
+    "MonthsEmployed": -0.3393104952838233,
+    "NumCreditLines": 0.10411349201798555,
+    "InterestRate": 0.4604961380139692,
+    "LoanTerm": 0.013844767059089682,
+    "DTIRatio": 0.07039577030057956,
+    "EstimatedEMI": -0.2404123772342453,
+    "Payment_to_Income_Ratio": 0.36939483947000384,
+    "Education_High School": 0.0761410297141823,
+    "Education_Master's": -0.13516613888977214,
+    "Education_PhD": -0.17710657389348508,
+    "EmploymentType_Part-time": 0.2742751796603465,
+    "EmploymentType_Self-employed": 0.251706998520886,
+    "EmploymentType_Unemployed": 0.4421051947131585,
+    "MaritalStatus_Married": -0.19981570684691508,
+    "MaritalStatus_Single": -0.05017110851740256,
+    "HasMortgage_Yes": -0.16128557091952053,
+    "HasDependents_Yes": -0.2547635537645455,
+    "LoanPurpose_Business": 0.06726819079921838,
+    "LoanPurpose_Education": -0.00689145973626365,
+    "LoanPurpose_Home": -0.18630545592359546,
+    "LoanPurpose_Other": -0.00624906258501869,
+    "HasCoSigner_Yes": -0.2613329044227418
+  },
+  "numeric_features": [
+    "Age",
+    "Income",
+    "LoanAmount",
+    "CreditScore",
+    "MonthsEmployed",
+    "NumCreditLines",
+    "InterestRate",
+    "LoanTerm",
+    "DTIRatio",
+    "EstimatedEMI",
+    "Payment_to_Income_Ratio"
+  ],
+  "scaler": {
+    "mean": {
+      "Age": 43.50871610607166,
+      "Income": 82530.59539253073,
+      "LoanAmount": 127523.94622497883,
+      "CreditScore": 574.3766160654405,
+      "MonthsEmployed": 59.57842047807634,
+      "NumCreditLines": 2.5018920387513033,
+      "InterestRate": 13.488164551075254,
+      "LoanTerm": 35.991188435310875,
+      "DTIRatio": 0.5005044131253151,
+      "EstimatedEMI": 5652.9948887773635,
+      "Payment_to_Income_Ratio": 0.09649994190972877
+    },
+    "scale": {
+      "Age": 14.98994144606724,
+      "Income": 38971.41573858954,
+      "LoanAmount": 70876.07733577643,
+      "CreditScore": 158.91000100912777,
+      "MonthsEmployed": 34.66491107907374,
+      "NumCreditLines": 1.1169657122801864,
+      "InterestRate": 6.6382030838387065,
+      "LoanTerm": 16.97384165514685,
+      "DTIRatio": 0.23100399068748512,
+      "EstimatedEMI": 4736.08579788474,
+      "Payment_to_Income_Ratio": 0.12236691242478025
+    }
+  },
+  "categorical_columns": {
+    "Education": {
+      "all_categories": [
+        "Bachelor's",
+        "High School",
+        "Master's",
+        "PhD"
+      ],
+      "dropped_category": "Bachelor's",
+      "encoded_columns": [
+        "Education_High School",
+        "Education_Master's",
+        "Education_PhD"
+      ]
+    },
+    "EmploymentType": {
+      "all_categories": [
+        "Full-time",
+        "Part-time",
+        "Self-employed",
+        "Unemployed"
+      ],
+      "dropped_category": "Full-time",
+      "encoded_columns": [
+        "EmploymentType_Part-time",
+        "EmploymentType_Self-employed",
+        "EmploymentType_Unemployed"
+      ]
+    },
+    "MaritalStatus": {
+      "all_categories": [
+        "Divorced",
+        "Married",
+        "Single"
+      ],
+      "dropped_category": "Divorced",
+      "encoded_columns": [
+        "MaritalStatus_Married",
+        "MaritalStatus_Single"
+      ]
+    },
+    "HasMortgage": {
+      "all_categories": [
+        "No",
+        "Yes"
+      ],
+      "dropped_category": "No",
+      "encoded_columns": [
+        "HasMortgage_Yes"
+      ]
+    },
+    "HasDependents": {
+      "all_categories": [
+        "No",
+        "Yes"
+      ],
+      "dropped_category": "No",
+      "encoded_columns": [
+        "HasDependents_Yes"
+      ]
+    },
+    "LoanPurpose": {
+      "all_categories": [
+        "Auto",
+        "Business",
+        "Education",
+        "Home",
+        "Other"
+      ],
+      "dropped_category": "Auto",
+      "encoded_columns": [
+        "LoanPurpose_Business",
+        "LoanPurpose_Education",
+        "LoanPurpose_Home",
+        "LoanPurpose_Other"
+      ]
+    },
+    "HasCoSigner": {
+      "all_categories": [
+        "No",
+        "Yes"
+      ],
+      "dropped_category": "No",
+      "encoded_columns": [
+        "HasCoSigner_Yes"
+      ]
+    }
+  },
+  "derived_features": {
+    "EstimatedEMI": "if InterestRate == 0: LoanAmount / LoanTerm; else: LoanAmount * r * (1+r)^n / ((1+r)^n - 1), where r = InterestRate/12/100, n = LoanTerm (months)",
+    "Payment_to_Income_Ratio": "EstimatedEMI / (Income + 1e-6)"
+  },
+  "prediction_formula": "p_default = sigmoid(intercept + sum(coefficients[f] * standardized_or_encoded_value[f] for f in feature_order)); standardize numeric features as (raw - scaler.mean[f]) / scaler.scale[f]; categorical dummy value is 1.0 if that category is present else 0.0, and the dropped_category for each column maps to all-zeros.",
+  "compliance_flags": {
+    "protected_or_sensitive_input_features": [
+      "Age",
+      "MaritalStatus_Married",
+      "MaritalStatus_Single"
+    ],
+    "note": "Age and marital status are protected bases under ECOA/Regulation B. The model uses them as predictive inputs (this is the original ML project's design, out of scope to change here), but the AI explanation layer (Stage 1) must never surface Age or MaritalStatus as a cited reason in generated explanations, regardless of their statistical contribution. Enforce this as an explicit eval check, not a prompt-only instruction."
+  }
+}

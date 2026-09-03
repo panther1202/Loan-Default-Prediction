@@ -1,0 +1,24 @@
+# secrets
+.env
+.dev.vars
+*.key
+
+# node / wrangler (Stage 1+)
+node_modules/
+dist/
+.wrangler/
+.svelte-kit/
+
+# python
+__pycache__/
+*.pyc
+
+# jetbrains
+.idea/
+*.iml
+
+# obsidian per-machine ui state
+docs/.obsidian/workspace.json
+
+# 24MB kaggle source dataset - kept local, not versioned
+data/Loan_default.csv
