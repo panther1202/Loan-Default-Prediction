@@ -29,6 +29,7 @@ Status at a glance — update the `status` frontmatter field on each note as dec
 - [[0004-deployment-platform]] — Accepted — Cloudflare Workers + Wrangler + GitHub Actions
 - [[0005-ml-model-hosting]] — Accepted — model confirmed as `LogisticRegression`, exact attribution as plain arithmetic in the Worker
 - [[0006-frontend-framework-hosting]] — Accepted — SvelteKit applicant-facing portal on Cloudflare
+- [[0007-approval-decision-and-suggestions]] — Architecture Accepted, parameters pending confirmation — rate-card approval gate + hard-coded suggestion allow-list
 
 ## Live ADR status (requires the free Dataview plugin)
 
