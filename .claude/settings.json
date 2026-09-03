@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(app.py)",
+      "Edit(model_params.json)",
+      "Edit(**/*.pkl)",
+      "Edit(data/**)"
+    ]
+  }
+}
