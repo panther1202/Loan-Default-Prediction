@@ -150,10 +150,11 @@ a reason to rely on it rarely surfacing.
 
 ## Action Items
 1. [x] Confirm or adjust the rate card, term options, and threshold — done 2026-09-03: threshold 0.37, quintile bands, 400bps card, no term surcharge, `LoanTerm` dropped from the suggestion allow-list.
-2. [ ] Implement the rate-card lookup, scoring, and suggestion-computation logic in Stage 1 per `docs/IMPLEMENTATION_PLAN.md`.
+2. [x] Implement the rate-card lookup, scoring, and suggestion-computation logic in Stage 1 per `docs/IMPLEMENTATION_PLAN.md`. Done in Stage 1a: `src/policy.ts`. The band breakpoints are read from `model_params.json.credit_score_bands` rather than hardcoded, so a re-export moves the bands; the APRs, the 0.37 threshold, the term options and the suggestion allow-list are constants there, because they are decisions from this ADR rather than measurements.
 3. [ ] Add the rate card as a citable document in the Stage 2 policy corpus.
 4. [ ] Re-check every number in the Evidence section if the model is ever retrained or the training data extended — all of it is measured against the current frozen model, not derived from first principles. See [[0008-model-change-policy]].
 5. [ ] Add the suggestion allow-list enforcement test to `docs/TEST_STRATEGY.md`'s hard-gate checks.
+6. [ ] Define what "the 1–2 most feasible" suggestions means. This ADR asks for the most feasible ones but gives no measure, and feasibility is a policy judgement (is finding a co-signer easier than borrowing $36,000 less?) rather than something to settle in code. Stage 1a therefore returns every allow-listed lever that clears the threshold, in allow-list order, and leaves the caller to take the first two. Decide the ranking here, then apply it in `computeSuggestions`.
 
 ## Related
 

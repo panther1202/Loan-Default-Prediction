@@ -17,6 +17,8 @@ Supersedes the earlier standalone brief, which assumed a Python/`google-genai` s
 
 Goal: turn a raw applicant input into a decision and a compliant, structured explanation grounded in exact feature attribution — no SHAP library needed, because the model is linear.
 
+**Split into 1a and 1b during implementation (2026-09-03).** [[0007-approval-decision-and-suggestions]] grew this stage from "explain a decision" into four responsibilities, and the last of them needs credentials that do not exist yet. **Stage 1a — done:** steps 1–7 below plus the rate card, threshold and denial suggestions, in `src/params.ts`, `src/pipeline.ts` and `src/policy.ts`, with 65 Vitest tests including the parity check against the pickled model. No LLM, no Worker, no Wrangler config — 1a is pure functions, so there is nothing yet to deploy or to run inside workerd. Run it with `npm test` and `npm run demo`. **Stage 1b — not started:** step 8 below. It is gated on a Cloudflare AI Gateway instance and a `GEMINI_API_KEY`, neither of which is set up; [[0003-observability]] requires the gateway from the first Gemini call rather than as a retrofit, so that setup is a prerequisite, not a parallel task. `wrangler.toml`, the Workers-pool test runner and the GitHub Actions job land with 1b, when there is a fetch handler for them to act on.
+
 **Pipeline (implement in this order, in TypeScript, using `model_params.json`):**
 1. Clamp each raw numeric field to `model_params.json.outlier_bounds.bounds[f]`. This runs first, before the derived features, matching `app.py`. No training row was ever outside these bounds, so it changes nothing for an in-range applicant — it exists so an out-of-range submission degrades predictably instead of extrapolating silently.
 2. Compute derived features `EstimatedEMI` and `Payment_to_Income_Ratio` from the raw applicant fields, using the formulas in `model_params.json.derived_features`.
@@ -28,6 +30,8 @@ Goal: turn a raw applicant input into a decision and a compliant, structured exp
 8. Define a strict JSON schema for the LLM's output (`decision`, `primary_reasons`, `explanation_text`, `reason_codes`), call Gemini via its structured-output mode (`response_mime_type: application/json` + `response_schema`) through Cloudflare AI Gateway ([[0003-observability]]), with a system prompt that constrains the model to only phrase the (already-filtered) attribution values it was given — never invent a factor and never reintroduce a filtered one.
 
 **Verification before moving to Stage 2:** run the TypeScript pipeline (steps 1–5) against a handful of rows also scored by the original Python model (`model.predict_proba`), and confirm the probabilities match within floating-point tolerance. This is the parity check named in [[TEST_STRATEGY]] — don't skip it, since a silent preprocessing mismatch (e.g. a mis-ordered one-hot column) would make every downstream explanation wrong in a way that's hard to notice by inspection.
+
+Done in Stage 1a. `export_parity_cases.py` scores 12 hand-authored applicants with the pickled model, scaler and encoder and writes `evals/parity_cases.json`; `src/parity.test.ts` asserts the TypeScript pipeline reproduces every one — all 26 feature values, the probability, and the per-feature contributions — to a relative tolerance of 1e-12, with a negative control so a silently-vacuous comparison cannot pass as parity. Regenerate the fixture after any approved model change, per [[0008-model-change-policy]].
 
 Build the grounding test and the protected-feature exclusion test from [[TEST_STRATEGY]] alongside this stage, not after.
 
@@ -74,24 +78,30 @@ Sketch, when this gets picked up:
 
 What-if/counterfactual agent tool, fairness red-team eval, and the drift-monitoring dashboard remain deferred per the original scoping discussion — see [[PRD]] §3.
 
-## Suggested repo layout
+## Repo layout
 
-Adapt to what Step 0 finds; a reasonable default for the Workers/TypeScript stack:
+As built in Stage 1a, with the later stages still as sketched. The split differs slightly from the original sketch below: `predict.ts`/`explain.ts` became `pipeline.ts` (the model, per [[0005-ml-model-hosting]]) and `policy.ts` (the lending decisions, per [[0007-approval-decision-and-suggestions]]), because the seam that matters is measurement versus policy — it is the line that says which numbers may be hardcoded and which must be read from the export.
 
 ```
 model_params.json   # exported once from the sklearn model — coefficients, scaler, encoder, formulas
+export_parity_cases.py # reads the .pkl artifacts, writes the parity fixture
 src/
-  predict.ts       # Stage 1: preprocessing + scoring pipeline against model_params.json
-  explain.ts       # Stage 1: attribution + protected-feature filter + LLM structured explanation
+  params.ts        # typed access to model_params.json; every data-derived constant enters here
+  pipeline.ts      # Stage 1a: validate, clamp, derive, scale, encode, score, attribute, filter
+  policy.ts        # Stage 1a: rate card, threshold, denial suggestions
+  demo.ts          # Stage 1a: runnable demo (npm run demo)
+  *.test.ts        # colocated Vitest specs, including the sklearn parity check
+  explain.ts       # Stage 1b: prompt construction + Gemini structured output via AI Gateway
   rag.ts           # Stage 2: corpus loading, embedding, Vectorize retrieval
   agent.ts         # Stage 3: tool definitions + orchestration loop
-  index.ts         # Worker entry point
+  index.ts         # Stage 1b: Worker entry point
 evals/
-  cases.json       # fixed test applicants + expected top features (+ parity check vs. Python model)
+  parity_cases.json # 12 applicants scored by the pickled model — TS-vs-sklearn ground truth
+  cases.json       # Stage 4: fixed eval applicants + expected top features
   run_evals.ts
 policy_corpus/      # sample policy/regulatory text for RAG
-wrangler.toml
-portal/              # SvelteKit app (Stage 5) — separate deployable, calls the API Worker
+wrangler.toml       # Stage 1b, when there is a fetch handler to deploy
+portal/             # SvelteKit app (Stage 5) — separate deployable, calls the API Worker
 ```
 
 ## Related
